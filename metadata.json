@@ -1,0 +1,5 @@
+{
+  "name": "Trade PnL Analyzer",
+  "description": "An application to import trade history from a CSV file, analyze key performance indicators like Final PnL, Weekly Average PnL, and Monthly Average PnL, and export the data to an XLSX file.",
+  "requestFramePermissions": []
+}
