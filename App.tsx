@@ -54,9 +54,11 @@ const App: React.FC = () => {
                   <h2 className="text-xl font-semibold text-brand-text-primary">Analysis for: <span className="text-brand-primary">{fileName}</span></h2>
                   <ExportButton trades={trades} kpis={kpis} fileName={fileName} />
               </div>
-              <Dashboard kpis={kpis} />
-              <Charts trades={trades} />
-              <TradeTable trades={trades} />
+              <div id="report-content">
+                <Dashboard kpis={kpis} />
+                <Charts trades={trades} />
+                <TradeTable trades={trades} />
+              </div>
             </>
           )}
         </main>

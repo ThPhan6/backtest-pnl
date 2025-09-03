@@ -13,7 +13,7 @@ const getWeekNumber = (d: Date): number => {
 
 export const calculateKpis = (trades: Trade[]): KPIs => {
   if (trades.length === 0) {
-    return { finalPnl: 0, weeklyAvgPnl: 0, monthlyAvgPnl: 0, winRate: 0, totalTrades: 0, avgTradesPerWeek: 0, avgTradesPerMonth: 0, totalWins: 0, totalLosses: 0, longestWinStreak: 0, longestLossStreak: 0, currentStreak: 0, currentStreakType: 'none' };
+    return { finalPnl: 0, weeklyAvgPnl: 0, monthlyAvgPnl: 0, winRate: 0, totalTrades: 0, avgTradesPerWeek: 0, avgTradesPerMonth: 0, totalWins: 0, totalLosses: 0, longestWinStreak: 0, longestLossStreak: 0, currentStreak: 0, currentStreakType: 'none', highestProfit: 0, highestLoss: 0 };
   }
 
   const sortedTrades = [...trades].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
@@ -21,6 +21,8 @@ export const calculateKpis = (trades: Trade[]): KPIs => {
   let finalPnl = 0;
   let totalWins = 0;
   let totalLosses = 0;
+  let highestProfit = 0;
+  let highestLoss = 0;
   const weeklyPnls: { [key: string]: number } = {};
   const monthlyPnls: { [key: string]: number } = {};
   const weeklyTradeCounts: { [key: string]: number } = {};
@@ -31,8 +33,14 @@ export const calculateKpis = (trades: Trade[]): KPIs => {
 
     if (trade.profitOrLoss > 0) {
       totalWins++;
+      if (trade.profitOrLoss > highestProfit) {
+        highestProfit = trade.profitOrLoss;
+      }
     } else if (trade.profitOrLoss < 0) {
       totalLosses++;
+      if (trade.profitOrLoss < highestLoss) {
+        highestLoss = trade.profitOrLoss;
+      }
     }
 
     const year = trade.startDate.getFullYear();
@@ -115,6 +123,8 @@ export const calculateKpis = (trades: Trade[]): KPIs => {
     longestLossStreak,
     currentStreak,
     currentStreakType,
+    highestProfit,
+    highestLoss,
   };
 };
 

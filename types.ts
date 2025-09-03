@@ -26,4 +26,6 @@ export interface KPIs {
   longestLossStreak: number;
   currentStreak: number;
   currentStreakType: 'win' | 'loss' | 'none';
+  highestProfit: number;
+  highestLoss: number;
 }

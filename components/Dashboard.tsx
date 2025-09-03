@@ -53,6 +53,8 @@ const Dashboard: React.FC<DashboardProps> = ({ kpis }) => {
         
         {/* Row 3: Other stats */}
         <KpiCard title="Total Trades" description="Total number of trades analyzed.">{kpis.totalTrades}</KpiCard>
+        <KpiCard title="Highest Profit" description="Largest single winning trade.">{formatCurrency(kpis.highestProfit)}</KpiCard>
+        <KpiCard title="Highest Loss" description="Largest single losing trade.">{formatCurrency(kpis.highestLoss)}</KpiCard>
         <KpiCard title="Current Streak" description={`Longest Win: ${kpis.longestWinStreak}, Longest Loss: ${kpis.longestLossStreak}`}>
           {kpis.currentStreak > 0 ? (
             <span className={kpis.currentStreakType === 'win' ? 'text-brand-success' : 'text-brand-danger'}>
