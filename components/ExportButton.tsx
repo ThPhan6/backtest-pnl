@@ -46,11 +46,13 @@ const ExportButton: React.FC<ExportButtonProps> = ({ trades, kpis, fileName }) =
     // 1. Prepare Summary data
     const summaryData = [
       ['Metric', 'Value'],
+      ['Final PnL', kpis.finalPnl],
+      ['Total Profit', kpis.totalProfit],
+      ['Total Loss', kpis.totalLoss],
+      ['Win Rate (%)', kpis.winRate.toFixed(2)],
       ['Total Trades', kpis.totalTrades],
       ['Winning Trades', kpis.totalWins],
       ['Losing Trades', kpis.totalLosses],
-      ['Win Rate (%)', kpis.winRate.toFixed(2)],
-      ['Final PnL', kpis.finalPnl],
       ['Highest Profit', kpis.highestProfit],
       ['Highest Loss', kpis.highestLoss],
       ['Weekly Avg PnL', kpis.weeklyAvgPnl],

@@ -28,4 +28,6 @@ export interface KPIs {
   currentStreakType: 'win' | 'loss' | 'none';
   highestProfit: number;
   highestLoss: number;
+  totalProfit: number;
+  totalLoss: number;
 }

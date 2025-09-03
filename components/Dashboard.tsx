@@ -31,30 +31,24 @@ const Dashboard: React.FC<DashboardProps> = ({ kpis }) => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Row 1: High-level performance */}
+        {/* Row 1: Core PnL Metrics */}
         <KpiCard title="Final PnL" description="Net profit or loss from all trades.">{formatCurrency(kpis.finalPnl)}</KpiCard>
+        <KpiCard title="Total Profit" description="Sum of all winning trades.">{formatCurrency(kpis.totalProfit)}</KpiCard>
+        <KpiCard title="Total Loss" description="Sum of all losing trades.">{formatCurrency(kpis.totalLoss)}</KpiCard>
         <KpiCard title="Win Rate" description="Percentage of profitable trades.">
           <span className={kpis.winRate >= 50 ? 'text-brand-success' : 'text-brand-danger'}>
              {kpis.winRate.toFixed(2)}%
           </span>
         </KpiCard>
+
+        {/* Row 2: Trade Volume */}
+        <KpiCard title="Total Trades" description="Total number of trades analyzed.">{kpis.totalTrades}</KpiCard>
         <KpiCard title="Winning Trades" description="Total number of profitable trades.">
           <span className="text-brand-success">{kpis.totalWins}</span>
         </KpiCard>
         <KpiCard title="Losing Trades" description="Total number of unprofitable trades.">
           <span className="text-brand-danger">{kpis.totalLosses}</span>
         </KpiCard>
-
-        {/* Row 2: Averages */}
-        <KpiCard title="Monthly Avg PnL" description="Average profit or loss per month.">{formatCurrency(kpis.monthlyAvgPnl)}</KpiCard>
-        <KpiCard title="Weekly Avg PnL" description="Average profit or loss per week.">{formatCurrency(kpis.weeklyAvgPnl)}</KpiCard>
-        <KpiCard title="Avg Trades / Month" description="Average number of trades per month.">{kpis.avgTradesPerMonth.toFixed(1)}</KpiCard>
-        <KpiCard title="Avg Trades / Week" description="Average number of trades per week.">{kpis.avgTradesPerWeek.toFixed(1)}</KpiCard>
-        
-        {/* Row 3: Other stats */}
-        <KpiCard title="Total Trades" description="Total number of trades analyzed.">{kpis.totalTrades}</KpiCard>
-        <KpiCard title="Highest Profit" description="Largest single winning trade.">{formatCurrency(kpis.highestProfit)}</KpiCard>
-        <KpiCard title="Highest Loss" description="Largest single losing trade.">{formatCurrency(kpis.highestLoss)}</KpiCard>
         <KpiCard title="Current Streak" description={`Longest Win: ${kpis.longestWinStreak}, Longest Loss: ${kpis.longestLossStreak}`}>
           {kpis.currentStreak > 0 ? (
             <span className={kpis.currentStreakType === 'win' ? 'text-brand-success' : 'text-brand-danger'}>
@@ -64,6 +58,16 @@ const Dashboard: React.FC<DashboardProps> = ({ kpis }) => {
             'N/A'
           )}
         </KpiCard>
+        
+        {/* Row 3: Highs, Lows & Averages */}
+        <KpiCard title="Highest Profit" description="Largest single winning trade.">{formatCurrency(kpis.highestProfit)}</KpiCard>
+        <KpiCard title="Highest Loss" description="Largest single losing trade.">{formatCurrency(kpis.highestLoss)}</KpiCard>
+        <KpiCard title="Monthly Avg PnL" description="Average profit or loss per month.">{formatCurrency(kpis.monthlyAvgPnl)}</KpiCard>
+        <KpiCard title="Weekly Avg PnL" description="Average profit or loss per week.">{formatCurrency(kpis.weeklyAvgPnl)}</KpiCard>
+        
+        {/* Row 4: Trade Frequency */}
+        <KpiCard title="Avg Trades / Month" description="Average number of trades per month.">{kpis.avgTradesPerMonth.toFixed(1)}</KpiCard>
+        <KpiCard title="Avg Trades / Week" description="Average number of trades per week.">{kpis.avgTradesPerWeek.toFixed(1)}</KpiCard>
       </div>
     </div>
   );
