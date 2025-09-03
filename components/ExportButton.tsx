@@ -94,50 +94,76 @@ const ExportButton: React.FC<ExportButtonProps> = ({ trades, kpis, fileName }) =
     setIsOpen(false);
     setIsExporting(true);
 
-    const reportElement = document.getElementById('report-content');
-    if (!reportElement) {
-        console.error("Report content element not found!");
+    const dashboardEl = document.getElementById('dashboard-section');
+    const chartsEl = document.getElementById('charts-section');
+    const tableEl = document.getElementById('table-section');
+
+    if (!dashboardEl || !chartsEl || !tableEl) {
+        console.error("One or more report sections not found!");
         setIsExporting(false);
         return;
     }
     
     try {
-        const canvas = await html2canvas(reportElement, {
-            scale: 2, // Higher scale for better quality
-            backgroundColor: '#111827', // Match brand background
-            useCORS: true,
-        });
+        const options = { scale: 2, backgroundColor: '#111827', useCORS: true };
         
-        const imgData = canvas.toDataURL('image/png');
+        const [dashboardCanvas, chartsCanvas, tableCanvas] = await Promise.all([
+            html2canvas(dashboardEl, options),
+            html2canvas(chartsEl, options),
+            html2canvas(tableEl, options)
+        ]);
+
+        const padding = 40; // Padding between stitched images in pixels
+        const totalHeight = dashboardCanvas.height + chartsCanvas.height + tableCanvas.height + (padding * 2);
+        const maxWidth = Math.max(dashboardCanvas.width, chartsCanvas.width, tableCanvas.width);
+
+        const stitchedCanvas = document.createElement('canvas');
+        stitchedCanvas.width = maxWidth;
+        stitchedCanvas.height = totalHeight;
+        const ctx = stitchedCanvas.getContext('2d');
+        if (!ctx) throw new Error("Could not create canvas context");
+
+        ctx.fillStyle = '#111827';
+        ctx.fillRect(0, 0, stitchedCanvas.width, stitchedCanvas.height);
+        
+        let currentY = 0;
+        ctx.drawImage(dashboardCanvas, 0, currentY);
+        currentY += dashboardCanvas.height + padding;
+        ctx.drawImage(chartsCanvas, 0, currentY);
+        currentY += chartsCanvas.height + padding;
+        ctx.drawImage(tableCanvas, 0, currentY);
+
+        const imgData = stitchedCanvas.toDataURL('image/png');
         const { jsPDF } = jspdf;
         
-        // A4 page size: 210mm x 297mm
-        const pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'mm',
-            format: 'a4'
-        });
+        const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const ratio = canvasWidth / canvasHeight;
+        const margin = 15;
+        let position = margin;
 
-        let imgWidth = pdfWidth - 20; // with margin
-        let imgHeight = imgWidth / ratio;
-        
+        pdf.setFontSize(22);
+        pdf.setTextColor('#F9FAFB');
+        pdf.text('Trade PnL Analysis Report', margin, position);
+        position += 10;
+        pdf.setFontSize(12);
+        pdf.setTextColor('#9CA3AF');
+        pdf.text(`Analysis for: ${fileName}`, margin, position);
+        position += 15;
+
+        const imgWidth = pdfWidth - margin * 2;
+        const imgHeight = (stitchedCanvas.height * imgWidth) / stitchedCanvas.width;
         let heightLeft = imgHeight;
-        let position = 10; // top margin
 
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - 20);
+        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - position - margin);
 
         while (heightLeft > 0) {
-            position = - (imgHeight - heightLeft) - 10;
+            position = -(imgHeight - heightLeft) + margin;
             pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= (pdfHeight - 20);
+            pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+            heightLeft -= (pdfHeight - margin * 2);
         }
         
         const exportFileName = fileName ? `analysis_${fileName.split('.')[0]}.pdf` : 'trade_analysis.pdf';

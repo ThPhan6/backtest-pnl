@@ -165,12 +165,12 @@ export const calculateChartData = (trades: Trade[]): { monthlyPnl: MonthlyPnlDat
 
     const monthKeys = Object.keys(monthlyData).sort();
     
-    const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' });
-    
     const monthlyPnl: MonthlyPnlData[] = monthKeys.map(key => {
         const date = new Date(`${key}-01T00:00:00Z`);
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const year = String(date.getUTCFullYear()).slice(-2);
         return {
-            month: monthFormatter.format(date),
+            month: `${month}${year}`,
             pnl: monthlyData[key].pnl,
         };
     });
@@ -178,8 +178,10 @@ export const calculateChartData = (trades: Trade[]): { monthlyPnl: MonthlyPnlDat
     const monthlyHighLow: MonthlyHighLowData[] = monthKeys.map(key => {
         const date = new Date(`${key}-01T00:00:00Z`);
         const tradesInMonth = monthlyData[key].trades;
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const year = String(date.getUTCFullYear()).slice(-2);
         return {
-            month: monthFormatter.format(date),
+            month: `${month}${year}`,
             highest: Math.max(...tradesInMonth.filter(pnl => pnl > 0), 0),
             lowest: Math.min(...tradesInMonth.filter(pnl => pnl < 0), 0),
         };
